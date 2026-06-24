@@ -202,6 +202,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:text="Start Server"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 app:cornerRadius="8dp"
                 android:backgroundTint="@color/statusRunning"/>
@@ -212,6 +213,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="8dp"
                 android:text="Stop Server"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 app:cornerRadius="8dp"
                 android:backgroundTint="@color/statusStopped"/>

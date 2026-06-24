@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import android.content.res.ColorStateList;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -116,21 +117,46 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         mUpdateHandler.removeCallbacks(mUpdateRunnable);
     }
-
     private void updateUI() {
         boolean isRunning = mServerManager.isRunning();
         SettingsManager.Settings settings = SettingsManager.loadSettings();
         
+        int colorRunning = ContextCompat.getColor(this, R.color.statusRunning);
+        int colorStopped = ContextCompat.getColor(this, R.color.statusStopped);
+        int colorDisabledBg = ContextCompat.getColor(this, R.color.btnDisabledBackground);
+        int colorDisabledText = ContextCompat.getColor(this, R.color.btnDisabledText);
+        int colorEnabledText = ContextCompat.getColor(this, R.color.btnTextEnabled);
+
         if (isRunning) {
             textStatus.setText("Running");
-            textStatus.setTextColor(ContextCompat.getColor(this, R.color.statusRunning));
+            textStatus.setTextColor(colorRunning);
+            
+            // Start Button (Disabled)
             btnStart.setEnabled(false);
+            btnStart.setBackgroundTintList(ColorStateList.valueOf(colorDisabledBg));
+            btnStart.setTextColor(colorDisabledText);
+            btnStart.setAlpha(0.6f);
+            
+            // Stop Button (Enabled)
             btnStop.setEnabled(true);
+            btnStop.setBackgroundTintList(ColorStateList.valueOf(colorStopped));
+            btnStop.setTextColor(colorEnabledText);
+            btnStop.setAlpha(1.0f);
         } else {
             textStatus.setText("Stopped");
-            textStatus.setTextColor(ContextCompat.getColor(this, R.color.statusStopped));
+            textStatus.setTextColor(colorStopped);
+            
+            // Start Button (Enabled)
             btnStart.setEnabled(true);
+            btnStart.setBackgroundTintList(ColorStateList.valueOf(colorRunning));
+            btnStart.setTextColor(colorEnabledText);
+            btnStart.setAlpha(1.0f);
+            
+            // Stop Button (Disabled)
             btnStop.setEnabled(false);
+            btnStop.setBackgroundTintList(ColorStateList.valueOf(colorDisabledBg));
+            btnStop.setTextColor(colorDisabledText);
+            btnStop.setAlpha(0.6f);
         }
 
         String ip = NetworkUtils.getWifiIpAddress(this);
