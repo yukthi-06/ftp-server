@@ -14,6 +14,8 @@ public class SettingsManager {
     
     // Path specified by requirements: /sdcard/Vypeensoft/FTP_Server/setings/settings.json
     private static final String REQUIRED_PATH = "/sdcard/Vypeensoft/FTP_Server/setings/settings.json";
+
+    private static Settings sCachedSettings = null;
     
     public static class Settings {
         public boolean server_enabled = false;
@@ -52,12 +54,17 @@ public class SettingsManager {
     }
 
     public static synchronized Settings loadSettings() {
+        if (sCachedSettings != null) {
+            return sCachedSettings;
+        }
+
         File file = getSettingsFile();
         Gson gson = new Gson();
         if (!file.exists()) {
             Log.d(TAG, "Settings file does not exist. Creating default settings.");
             Settings defaults = new Settings();
             saveSettings(defaults);
+            sCachedSettings = defaults;
             return defaults;
         }
 
@@ -67,34 +74,42 @@ public class SettingsManager {
                 Log.e(TAG, "Parsing settings returned null. Creating defaults.");
                 Settings defaults = new Settings();
                 saveSettings(defaults);
+                sCachedSettings = defaults;
                 return defaults;
             }
             // Simple validation
             validateSettings(settings);
+            sCachedSettings = settings;
             return settings;
         } catch (Exception e) {
             Log.e(TAG, "Error loading settings, recreating defaults: " + e.getMessage());
             Settings defaults = new Settings();
             saveSettings(defaults);
+            sCachedSettings = defaults;
             return defaults;
         }
     }
 
-    public static synchronized void saveSettings(Settings settings) {
-        File file = getSettingsFile();
-        // Ensure folder structure exists
-        File parent = file.getParentFile();
-        if (parent != null && !parent.exists()) {
-            parent.mkdirs();
-        }
+    public static synchronized void saveSettings(final Settings settings) {
+        sCachedSettings = settings;
+        new Thread(() -> {
+            synchronized (SettingsManager.class) {
+                File file = getSettingsFile();
+                // Ensure folder structure exists
+                File parent = file.getParentFile();
+                if (parent != null && !parent.exists()) {
+                    parent.mkdirs();
+                }
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (FileWriter writer = new FileWriter(file)) {
-            gson.toJson(settings, writer);
-            Log.d(TAG, "Settings saved to: " + file.getAbsolutePath());
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to save settings: " + e.getMessage());
-        }
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                try (FileWriter writer = new FileWriter(file)) {
+                    gson.toJson(settings, writer);
+                    Log.d(TAG, "Settings saved asynchronously to: " + file.getAbsolutePath());
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to save settings: " + e.getMessage());
+                }
+            }
+        }).start();
     }
 
     private static void validateSettings(Settings settings) {

@@ -43,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
     private final FTPServerManager mServerManager = FTPServerManager.getInstance();
     private final Handler mUpdateHandler = new Handler(Looper.getMainLooper());
+    
+    private String mCachedIp = "";
+    private long mLastIpUpdate = 0;
+
     private final Runnable mUpdateRunnable = new Runnable() {
         @Override
         public void run() {
@@ -159,11 +163,25 @@ public class MainActivity extends AppCompatActivity {
             btnStop.setAlpha(0.6f);
         }
 
-        String ip = NetworkUtils.getWifiIpAddress(this);
-        textIp.setText(ip);
+        textIp.setText(mCachedIp);
         textPort.setText(String.valueOf(settings.port));
-        textFtpUrl.setText(NetworkUtils.generateFtpUrl(ip, settings.port));
+        textFtpUrl.setText(NetworkUtils.generateFtpUrl(mCachedIp, settings.port));
         textClients.setText(String.valueOf(mServerManager.getConnectedClientsCount()));
+
+        long now = System.currentTimeMillis();
+        if (mCachedIp.isEmpty() || now - mLastIpUpdate > 5000) {
+            mLastIpUpdate = now;
+            new Thread(() -> {
+                final String ip = NetworkUtils.getWifiIpAddress(MainActivity.this);
+                mUpdateHandler.post(() -> {
+                    mCachedIp = ip;
+                    if (textIp != null) textIp.setText(mCachedIp);
+                    if (textFtpUrl != null) {
+                        textFtpUrl.setText(NetworkUtils.generateFtpUrl(mCachedIp, settings.port));
+                    }
+                });
+            }).start();
+        }
     }
 
     private void startServer() {
