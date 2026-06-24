@@ -91,8 +91,6 @@ public class FTPServerManager {
         ConnectionConfigFactory connConfigFactory = new ConnectionConfigFactory();
         connConfigFactory.setMaxLogins(settings.max_connections);
         connConfigFactory.setMaxAnonymousLogins(settings.anonymous_login ? settings.max_connections : 0);
-        connConfigFactory.setMaxIpLogins(settings.max_connections);
-        connConfigFactory.setMaxAnonymousIpLogins(settings.anonymous_login ? settings.max_connections : 0);
         serverFactory.setConnectionConfig(connConfigFactory.createConnectionConfig());
 
         // Custom in-memory user manager
@@ -173,6 +171,7 @@ public class FTPServerManager {
             user.setName("anonymous");
             user.setHomeDirectory(mSettings.root_directory);
             List<Authority> authorities = new ArrayList<>();
+            authorities.add(new org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission(mSettings.max_connections, mSettings.max_connections));
             if (!mSettings.read_only) {
                 authorities.add(new WritePermission());
             }
@@ -186,6 +185,7 @@ public class FTPServerManager {
             user.setPassword(mSettings.password);
             user.setHomeDirectory(mSettings.root_directory);
             List<Authority> authorities = new ArrayList<>();
+            authorities.add(new org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission(mSettings.max_connections, mSettings.max_connections));
             if (!mSettings.read_only) {
                 authorities.add(new WritePermission());
             }
