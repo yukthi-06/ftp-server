@@ -8,7 +8,7 @@
 
     <!-- Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
-        id="@+id/toolbar"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -49,7 +49,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    id="@+id/editPort"
+                    android:id="@+id/editPort"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -64,7 +64,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    id="@+id/editMaxConnections"
+                    android:id="@+id/editMaxConnections"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -89,7 +89,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    id="@+id/editUsername"
+                    android:id="@+id/editUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
@@ -105,7 +105,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    id="@+id/editPassword"
+                    android:id="@+id/editPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
@@ -113,7 +113,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                id="@+id/switchAnonymous"
+                android:id="@+id/switchAnonymous"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Enable Anonymous Login"
@@ -137,7 +137,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    id="@+id/editRootDir"
+                    android:id="@+id/editRootDir"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
@@ -145,14 +145,14 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                id="@+id/switchReadOnly"
+                android:id="@+id/switchReadOnly"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Read Only Mode"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                id="@+id/switchPassiveMode"
+                android:id="@+id/switchPassiveMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Enable Passive Mode"
@@ -170,14 +170,14 @@
                 android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                id="@+id/switchAutoStart"
+                android:id="@+id/switchAutoStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Auto-start Server on Boot"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                id="@+id/switchShowNotification"
+                android:id="@+id/switchShowNotification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Show Status Notification"
@@ -189,7 +189,7 @@
 
     <!-- Bottom Buttons Panel -->
     <LinearLayout
-        id="@+id/buttonsPanel"
+        android:id="@+id/buttonsPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -197,7 +197,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            id="@+id/btnReset"
+            android:id="@+id/btnReset"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="56dp"
@@ -208,7 +208,7 @@
             app:cornerRadius="8dp"/>
 
         <com.google.android.material.button.MaterialButton
-            id="@+id/btnSave"
+            android:id="@+id/btnSave"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_weight="1"

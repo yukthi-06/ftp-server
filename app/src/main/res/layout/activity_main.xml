@@ -9,7 +9,7 @@
 
     <!-- Toolbar or Custom Header -->
     <com.google.android.material.appbar.MaterialToolbar
-        id="@+id/toolbar"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -20,7 +20,7 @@
 
     <!-- Status Card -->
     <com.google.android.material.card.MaterialCardView
-        id="@+id/statusCard"
+        android:id="@+id/statusCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -47,7 +47,7 @@
                 android:textSize="14sp"/>
 
             <TextView
-                id="@+id/textStatus"
+                android:id="@+id/textStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Stopped"
@@ -77,7 +77,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    id="@+id/textIp"
+                    android:id="@+id/textIp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="127.0.0.1"
@@ -92,7 +92,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    id="@+id/textPort"
+                    android:id="@+id/textPort"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2121"
@@ -107,7 +107,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
-                    id="@+id/textFtpUrl"
+                    android:id="@+id/textFtpUrl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ftp://127.0.0.1:2121"
@@ -121,7 +121,7 @@
 
     <!-- Client Connections Card -->
     <com.google.android.material.card.MaterialCardView
-        id="@+id/clientsCard"
+        android:id="@+id/clientsCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
@@ -150,7 +150,7 @@
                 android:textSize="16sp"/>
 
             <TextView
-                id="@+id/textClients"
+                android:id="@+id/textClients"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
@@ -169,7 +169,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            id="@+id/btnStart"
+            android:id="@+id/btnStart"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="Start Server"
@@ -178,7 +178,7 @@
             android:backgroundTint="@color/statusRunning"/>
 
         <com.google.android.material.button.MaterialButton
-            id="@+id/btnStop"
+            android:id="@+id/btnStop"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="8dp"
@@ -188,7 +188,7 @@
             android:backgroundTint="@color/statusStopped"/>
 
         <com.google.android.material.button.MaterialButton
-            id="@+id/btnSettings"
+            android:id="@+id/btnSettings"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="56dp"

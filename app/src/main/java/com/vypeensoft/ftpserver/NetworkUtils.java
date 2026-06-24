@@ -19,17 +19,21 @@ public class NetworkUtils {
 
     public static String getWifiIpAddress(Context context) {
         WifiManager wm = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (wm != null && wm.isWifiEnabled()) {
-            int ipAddress = wm.getConnectionInfo().getIpAddress();
-            if (ipAddress != 0) {
-                String ip = String.format(Locale.US, "%d.%d.%d.%d",
-                        (ipAddress & 0xff),
-                        (ipAddress >> 8 & 0xff),
-                        (ipAddress >> 16 & 0xff),
-                        (ipAddress >> 24 & 0xff));
-                Log.d(TAG, "IP via WifiManager: " + ip);
-                return ip;
+        try {
+            if (wm != null && wm.isWifiEnabled()) {
+                int ipAddress = wm.getConnectionInfo().getIpAddress();
+                if (ipAddress != 0) {
+                    String ip = String.format(Locale.US, "%d.%d.%d.%d",
+                            (ipAddress & 0xff),
+                            (ipAddress >> 8 & 0xff),
+                            (ipAddress >> 16 & 0xff),
+                            (ipAddress >> 24 & 0xff));
+                    Log.d(TAG, "IP via WifiManager: " + ip);
+                    return ip;
+                }
             }
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to get IP from WifiManager, using NetworkInterface fallback: " + e.getMessage());
         }
         
         // Fallback or Hotspot Mode: search network interfaces
