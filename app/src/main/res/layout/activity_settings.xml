@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".SettingsActivity">
 
     <!-- Toolbar -->
@@ -11,10 +12,11 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/white"
         android:elevation="4dp"
         app:title="Configure Settings"
-        app:titleTextColor="@color/white"
+        app:titleTextColor="@color/black"
+        app:navigationIconTint="@color/black"
         app:navigationIcon="?attr/homeAsUpIndicator"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -203,8 +205,9 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:text="Reset Defaults"
+            android:textColor="@color/black"
             android:layout_marginEnd="8dp"
-            app:strokeColor="@color/primaryColor"
+            app:strokeColor="@color/black"
             app:cornerRadius="8dp"/>
 
         <com.google.android.material.button.MaterialButton
@@ -213,6 +216,8 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:text="Save Settings"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/white"
             app:cornerRadius="8dp"/>
 
     </LinearLayout>

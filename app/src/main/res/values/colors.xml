@@ -8,11 +8,11 @@
     <color name="white">#FFFFFFFF</color>
     
     <!-- Custom Palette -->
-    <color name="primaryColor">#2196F3</color>
-    <color name="primaryDarkColor">#1976D2</color>
-    <color name="primaryLightColor">#BBDEFB</color>
-    <color name="secondaryColor">#FF4081</color>
-    <color name="backgroundCard">#F5F5F5</color>
-    <color name="statusRunning">#4CAF50</color>
-    <color name="statusStopped">#F44336</color>
+    <color name="primaryColor">#000000</color>
+    <color name="primaryDarkColor">#000000</color>
+    <color name="primaryLightColor">#EEEEEE</color>
+    <color name="secondaryColor">#000000</color>
+    <color name="backgroundCard">#FFFFFF</color>
+    <color name="statusRunning">#000000</color>
+    <color name="statusStopped">#757575</color>
 </resources>
