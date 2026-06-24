@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView textClients;
     private MaterialButton btnStart;
     private MaterialButton btnStop;
-    private MaterialButton btnSettings;
     private DrawerLayout drawer;
 
     private final FTPServerManager mServerManager = FTPServerManager.getInstance();
@@ -64,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         textClients = findViewById(R.id.textClients);
         btnStart = findViewById(R.id.btnStart);
         btnStop = findViewById(R.id.btnStop);
-        btnSettings = findViewById(R.id.btnSettings);
 
         // Setup Toolbar
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
@@ -96,10 +94,6 @@ public class MainActivity extends AppCompatActivity {
         // Setup Listeners
         btnStart.setOnClickListener(v -> startServer());
         btnStop.setOnClickListener(v -> stopServer());
-        btnSettings.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(intent);
-        });
 
         // Initialize settings directory and check permissions
         checkAndRequestPermissions();
