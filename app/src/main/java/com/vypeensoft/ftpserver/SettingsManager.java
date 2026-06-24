@@ -27,6 +27,7 @@ public class SettingsManager {
         public boolean auto_start = false;
         public int max_connections = 10;
         public boolean show_notification = true;
+        public boolean dark_theme = false;
     }
 
     private static File getSettingsFile() {

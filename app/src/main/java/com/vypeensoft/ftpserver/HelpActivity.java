@@ -12,6 +12,12 @@ public class HelpActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply Theme
+        SettingsManager.Settings themeSettings = SettingsManager.loadSettings();
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+            themeSettings.dark_theme ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+        );
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
 

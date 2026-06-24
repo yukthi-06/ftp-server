@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/backgroundColor"
     tools:context=".SettingsActivity">
 
     <!-- Toolbar -->
@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
+        android:background="@color/backgroundColor"
         android:elevation="4dp"
         app:title="Configure Settings"
         app:titleTextColor="@color/primaryColor"
@@ -184,6 +184,13 @@
                 android:layout_height="wrap_content"
                 android:text="Show Status Notification"
                 android:checked="true"
+                android:layout_marginBottom="12dp"/>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchDarkTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enable Dark Theme"
                 android:layout_marginBottom="16dp"/>
 
         </LinearLayout>

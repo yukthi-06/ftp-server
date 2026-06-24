@@ -24,12 +24,19 @@ public class SettingsActivity extends AppCompatActivity {
     private SwitchMaterial switchPassiveMode;
     private SwitchMaterial switchAutoStart;
     private SwitchMaterial switchShowNotification;
+    private SwitchMaterial switchDarkTheme;
 
     private MaterialButton btnReset;
     private MaterialButton btnSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply Theme
+        SettingsManager.Settings themeSettings = SettingsManager.loadSettings();
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+            themeSettings.dark_theme ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+        );
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -52,6 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
         switchPassiveMode = findViewById(R.id.switchPassiveMode);
         switchAutoStart = findViewById(R.id.switchAutoStart);
         switchShowNotification = findViewById(R.id.switchShowNotification);
+        switchDarkTheme = findViewById(R.id.switchDarkTheme);
 
         btnReset = findViewById(R.id.btnReset);
         btnSave = findViewById(R.id.btnSave);
@@ -77,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
         switchPassiveMode.setChecked(settings.passive_mode);
         switchAutoStart.setChecked(settings.auto_start);
         switchShowNotification.setChecked(settings.show_notification);
+        switchDarkTheme.setChecked(settings.dark_theme);
     }
 
     private void saveSettings() {
@@ -141,9 +150,16 @@ public class SettingsActivity extends AppCompatActivity {
         settings.passive_mode = switchPassiveMode.isChecked();
         settings.auto_start = switchAutoStart.isChecked();
         settings.show_notification = switchShowNotification.isChecked();
+        settings.dark_theme = switchDarkTheme.isChecked();
 
         // Save
         SettingsManager.saveSettings(settings);
+
+        if (currentSettings.dark_theme != settings.dark_theme) {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                settings.dark_theme ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+            );
+        }
         Toast.makeText(this, "Settings saved successfully!", Toast.LENGTH_SHORT).show();
 
         if (FTPServerManager.getInstance().isRunning() && currentSettings.port != port) {
