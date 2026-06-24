@@ -15,8 +15,8 @@
         android:background="@color/white"
         android:elevation="4dp"
         app:title="Configure Settings"
-        app:titleTextColor="@color/black"
-        app:navigationIconTint="@color/black"
+        app:titleTextColor="@color/primaryColor"
+        app:navigationIconTint="@color/primaryColor"
         app:navigationIcon="?attr/homeAsUpIndicator"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -205,9 +205,9 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:text="Reset Defaults"
-            android:textColor="@color/black"
+            android:textColor="@color/primaryColor"
             android:layout_marginEnd="8dp"
-            app:strokeColor="@color/black"
+            app:strokeColor="@color/primaryColor"
             app:cornerRadius="8dp"/>
 
         <com.google.android.material.button.MaterialButton
@@ -216,7 +216,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:text="Save Settings"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/primaryColor"
             android:textColor="@color/white"
             app:cornerRadius="8dp"/>
 

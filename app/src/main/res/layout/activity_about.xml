@@ -15,8 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
-            app:titleTextColor="@color/black"
-            app:navigationIconTint="@color/black"
+            app:titleTextColor="@color/primaryColor"
+            app:navigationIconTint="@color/primaryColor"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -62,7 +62,7 @@
                 android:layout_marginTop="32dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                app:strokeColor="@color/black"
+                app:strokeColor="@color/primaryColor"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
