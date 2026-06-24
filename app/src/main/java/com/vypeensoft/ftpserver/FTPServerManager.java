@@ -91,6 +91,8 @@ public class FTPServerManager {
         ConnectionConfigFactory connConfigFactory = new ConnectionConfigFactory();
         connConfigFactory.setMaxLogins(settings.max_connections);
         connConfigFactory.setMaxAnonymousLogins(settings.anonymous_login ? settings.max_connections : 0);
+        connConfigFactory.setMaxIpLogins(settings.max_connections);
+        connConfigFactory.setMaxAnonymousIpLogins(settings.anonymous_login ? settings.max_connections : 0);
         serverFactory.setConnectionConfig(connConfigFactory.createConnectionConfig());
 
         // Custom in-memory user manager
