@@ -1,0 +1,308 @@
+create an android application which is basically a "FTP Server" 
+Thesetings  are stored in a local folder as JSON files at /sdcard/Vypeensoft/FTP_Server/setings/settings.json
+
+develop the app in java (not kotlin)
+Give it as a single prompt to give to an agent to achieve this
+===================================================================================================
+The chatgpt output from above, use that to give prompt inside IDE
+
+
+Here is a **single, complete agent prompt** you can paste into a coding agent to generate the full system.
+
+---
+
+# 🧠 AGENT PROMPT — Sokoban Android (Java, modular engine, XML-based levels)
+
+You are to build a complete **offline Sokoban game system in Java** with two parts:
+
+1. **Android application (Java, not Kotlin)**
+2. **Reusable game engine module (pure Java, no Android dependencies)**
+
+The system must load Sokoban levels from **local XML files** in the format described below and allow gameplay.
+
+---
+
+# 🎯 GOAL
+
+Create a fully working Sokoban game where:
+
+* Each level is stored as a local XML file
+* The Android app loads levels from `/assets/levels/`
+* The engine is reusable in desktop Java apps (e.g., JavaFX)
+* The architecture is clean and modular
+
+---
+
+# 📦 INPUT XML FORMAT (DO NOT CHANGE)
+
+Each level is stored as:
+
+```xml
+<SOKOBAN_SOLVER_GRID>
+<span id="uas-port"/>
+<Id>24334</Id>
+<Name>Howard Levels 1 16</Name>
+<Licence/>
+<Url/>
+<Email/>
+<Author>Howard Abed</Author>
+<Serial>Howard Levels 1</Serial>
+<SerialNumber>16</SerialNumber>
+<SourceFile/>
+<Comment/>
+<Height>11</Height>
+<Width>15</Width>
+<NbBoxes>15</NbBoxes>
+<Date>2025-02-22 22:53:03.573692</Date>
+<SolverResult>1</SolverResult>
+<Pushes>183</Pushes>
+<Moves>625</Moves>
+<GridWithBlankSpaces>
+/###########/ ## ##/ # $ $@$ $ ##/ # $ $ $ $ $ #/ # $ $ $ $ $ #/ ###$######## #/ /# ##....## ##/ /# .....## #/ /##### #.. #/ /////#....#####/ /////######
+</GridWithBlankSpaces>
+<Rnd>9fQpADttYpcHXCfo</Rnd>
+<GridHash>276018847127673159</GridHash>
+<FrameHash>92684565274673833</FrameHash>
+<FrameAndBoxesHash>235481177541022185</FrameAndBoxesHash>
+</SOKOBAN_SOLVER_GRID>
+```
+
+---
+
+# 🧩 CORE REQUIREMENTS
+
+## 1. Game Engine (PURE JAVA MODULE — NO ANDROID CODE)
+
+Create a reusable module:
+
+```
+sokoban-engine/
+```
+
+### Must include:
+
+### A. Model
+
+* Grid representation
+* Player position
+* Box positions
+* Goal positions
+
+### B. Parser
+
+Parse XML and extract:
+
+* Width, Height
+* GridWithBlankSpaces
+* Convert into internal grid
+
+Handle symbols:
+
+| Symbol | Meaning           |
+| ------ | ----------------- |
+| `#`    | wall              |
+| `$`    | box               |
+| `@`    | player            |
+| `.`    | goal              |
+| space  | empty             |
+| `/`    | newline separator |
+
+Also handle combined cases like:
+
+* box on goal
+* player on goal (if encoded later)
+
+---
+
+### C. Game Rules Engine
+
+Implement:
+
+* move up/down/left/right
+* push box rules
+* block movement on walls
+* win condition: all boxes on goals
+
+Provide:
+
+```java
+GameState move(GameState state, Direction dir);
+boolean isWin(GameState state);
+```
+
+---
+
+### D. No Android dependencies
+
+Engine must be usable in:
+
+* Android
+* JavaFX desktop app
+* CLI tests
+
+---
+
+# 📱 2. ANDROID APP (Java ONLY)
+
+Create:
+
+```
+sokoban-android/
+```
+
+## Structure:
+
+```
+MainActivity
+GameView (Canvas rendering)
+LevelRepository (loads XML from assets)
+AndroidGameController
+```
+
+---
+
+## Responsibilities:
+
+### A. Level Loading
+
+* Load XML files from:
+
+```
+assets/levels/
+```
+
+* Parse using engine parser
+
+---
+
+### B. Rendering (Canvas-based)
+
+Use Android Canvas:
+
+* Draw grid tiles
+* Draw:
+
+  * walls (dark gray)
+  * floor (light gray)
+  * boxes (brown)
+  * goals (yellow dot)
+  * player (blue circle or sprite)
+
+---
+
+### C. Input Controls
+
+* Swipe OR buttons OR arrow key mapping:
+
+  * Up / Down / Left / Right
+
+---
+
+### D. Game loop
+
+* Update state via engine
+* Redraw canvas
+* Check win condition
+
+---
+
+# 🔁 3. ARCHITECTURE REQUIREMENTS
+
+Strict separation:
+
+### sokoban-engine (pure Java)
+
+```
+- GameState
+- GameEngine
+- LevelParser
+- Direction
+- Position
+```
+
+### sokoban-android
+
+```
+- UI only
+- Rendering only
+- Input handling only
+- Uses engine as dependency
+```
+
+---
+
+# 🔄 4. OPTIONAL BUT DESIRED FEATURES
+
+If possible:
+
+* Undo move stack
+* Restart level
+* Level selector screen
+* Move counter
+* Simple animation for box movement
+
+---
+
+# 🧪 5. DESKTOP REUSE (IMPORTANT)
+
+Ensure engine can later be used like:
+
+```java
+GameState state = LevelParser.parse(file);
+state = GameEngine.move(state, Direction.LEFT);
+```
+
+No Android imports anywhere in engine.
+
+---
+
+# 📁 OUTPUT EXPECTED
+
+Generate:
+
+### 1. Engine module
+
+* full Java classes
+* clean API
+* XML parser
+
+### 2. Android app
+
+* Java Activities
+* Canvas GameView
+* Asset loader
+* Controls
+
+### 3. Sample level files
+
+* at least 2 XML levels
+
+---
+
+# 🚨 CRITICAL RULES
+
+* MUST use Java (no Kotlin)
+* Engine MUST NOT depend on Android
+* Must support local XML files exactly as provided
+* Must be runnable as offline app
+* Must be clean, modular, production-style code
+
+---
+
+# 🧠 FINAL GOAL
+
+A fully playable offline Sokoban Android game with:
+
+* reusable engine
+* XML-driven levels
+* clean architecture
+* extensible design for desktop reuse
+
+---
+
+If you want, I can next generate:
+
+* the actual **full Android Studio project code**
+* or a **minimal working version (MVP)**
+* or a **JavaFX desktop version using the same engine**
+=======
