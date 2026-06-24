@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
+import com.vypeensoft.ftpserver.Log;
 
 public class BootReceiver extends BroadcastReceiver {
     private static final String TAG = "BootReceiver";

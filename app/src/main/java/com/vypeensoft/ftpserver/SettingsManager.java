@@ -1,7 +1,7 @@
 package com.vypeensoft.ftpserver;
 
 import android.os.Environment;
-import android.util.Log;
+import com.vypeensoft.ftpserver.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.File;
@@ -12,8 +12,8 @@ import java.io.IOException;
 public class SettingsManager {
     private static final String TAG = "SettingsManager";
     
-    // Path specified by requirements: /sdcard/Vypeensoft/FTP_Server/setings/settings.json
-    private static final String REQUIRED_PATH = "/sdcard/Vypeensoft/FTP_Server/setings/settings.json";
+    // Path specified by requirements: /sdcard/Vypeensoft/FTP_Server/settings/settings.json
+    private static final String REQUIRED_PATH = "/sdcard/Vypeensoft/FTP_Server/settings/settings.json";
 
     private static Settings sCachedSettings = null;
     
@@ -44,7 +44,7 @@ public class SettingsManager {
         // If we can't write to the direct path, use Environment.getExternalStorageDirectory() as backup
         if (parent != null && !parent.canWrite()) {
             File externalDir = Environment.getExternalStorageDirectory();
-            File backupParent = new File(externalDir, "Vypeensoft/FTP_Server/setings");
+            File backupParent = new File(externalDir, "Vypeensoft/FTP_Server/settings");
             if (!backupParent.exists()) {
                 backupParent.mkdirs();
             }

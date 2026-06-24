@@ -2,7 +2,7 @@ package com.vypeensoft.ftpserver;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
+import com.vypeensoft.ftpserver.Log;
 import org.apache.ftpserver.ConnectionConfigFactory;
 import org.apache.ftpserver.DataConnectionConfigurationFactory;
 import org.apache.ftpserver.FtpServer;
