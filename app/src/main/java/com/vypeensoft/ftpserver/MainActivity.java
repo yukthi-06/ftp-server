@@ -268,25 +268,20 @@ public class MainActivity extends AppCompatActivity {
     private void checkAllFilesAccess() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
-                new AlertDialog.Builder(this)
-                        .setTitle("All Files Access Needed")
-                        .setMessage("This application requires All Files Access permission to read and write FTP configurations and serve files to connected clients from outside sandbox folders.")
-                        .setPositiveButton("Grant", (dialog, which) -> {
-                            try {
-                                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                                intent.addCategory("android.intent.category.DEFAULT");
-                                intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
-                                startActivityForResult(intent, MANAGE_STORAGE_REQUEST_CODE);
-                            } catch (Exception e) {
-                                Intent intent = new Intent();
-                                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                                startActivityForResult(intent, MANAGE_STORAGE_REQUEST_CODE);
-                            }
-                        })
-                        .setNegativeButton("Cancel", (dialog, which) -> {
-                            Toast.makeText(MainActivity.this, "Without storage access, settings cannot be read/written.", Toast.LENGTH_LONG).show();
-                        })
-                        .show();
+                try {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    intent.addCategory("android.intent.category.DEFAULT");
+                    intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
+                    startActivityForResult(intent, MANAGE_STORAGE_REQUEST_CODE);
+                } catch (Exception e) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                        startActivityForResult(intent, MANAGE_STORAGE_REQUEST_CODE);
+                    } catch (Exception ex) {
+                        Toast.makeText(this, "Failed to open settings for All Files Access permission.", Toast.LENGTH_LONG).show();
+                    }
+                }
             } else {
                 // Ensure default settings directory and settings.json is created
                 SettingsManager.loadSettings();
