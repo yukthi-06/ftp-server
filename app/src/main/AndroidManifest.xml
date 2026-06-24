@@ -39,6 +39,18 @@
             android:label="Settings"
             android:parentActivityName=".MainActivity" />
 
+        <!-- About Screen -->
+        <activity
+            android:name=".AboutActivity"
+            android:label="About"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Help Screen -->
+        <activity
+            android:name=".HelpActivity"
+            android:label="Help &amp; Support"
+            android:parentActivityName=".MainActivity" />
+
         <!-- Foreground Service -->
         <service
             android:name=".FTPServerService"

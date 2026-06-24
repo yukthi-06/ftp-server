@@ -13,11 +13,15 @@ import android.provider.Settings;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton btnStart;
     private MaterialButton btnStop;
     private MaterialButton btnSettings;
+    private DrawerLayout drawer;
 
     private final FTPServerManager mServerManager = FTPServerManager.getInstance();
     private final Handler mUpdateHandler = new Handler(Looper.getMainLooper());
@@ -60,6 +65,33 @@ public class MainActivity extends AppCompatActivity {
         btnStart = findViewById(R.id.btnStart);
         btnStop = findViewById(R.id.btnStop);
         btnSettings = findViewById(R.id.btnSettings);
+
+        // Setup Toolbar
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Setup Drawer
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_main) {
+                // Already on main screen, just close drawer
+            } else if (id == R.id.nav_settings) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            } else if (id == R.id.nav_help) {
+                startActivity(new Intent(MainActivity.this, HelpActivity.class));
+            } else if (id == R.id.nav_about) {
+                startActivity(new Intent(MainActivity.this, AboutActivity.class));
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        });
 
         // Setup Listeners
         btnStart.setOnClickListener(v -> startServer());
@@ -253,6 +285,14 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "All Files Access Denied.", Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 }
