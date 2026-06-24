@@ -47,6 +47,7 @@
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
                 app:strokeColor="@color/primaryColor"
+                app:cardBackgroundColor="@color/backgroundCard"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -59,7 +60,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="How to connect to the FTP Server?"
-                        android:textColor="#212121"
+                        android:textColor="@color/textColorPrimary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -68,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Make sure both your Android device and client (e.g. PC) are connected to the same Wi-Fi network. Tap 'Start Server' on the main screen, then use any web browser or FTP client to access the displayed FTP URL."
-                        android:textColor="#757575"
+                        android:textColor="@color/textColorSecondary"
                         android:textSize="14sp" />
 
                     <View
@@ -82,7 +83,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="How to change the port or storage directory?"
-                        android:textColor="#212121"
+                        android:textColor="@color/textColorPrimary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -91,7 +92,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Open the left menu drawer, go to Settings, and edit the Port, Root Directory, Username, and Password options. Save settings to apply the new configuration."
-                        android:textColor="#757575"
+                        android:textColor="@color/textColorSecondary"
                         android:textSize="14sp" />
 
                     <View
@@ -105,7 +106,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="How does Anonymous Login work?"
-                        android:textColor="#212121"
+                        android:textColor="@color/textColorPrimary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -114,7 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="If Anonymous Login is enabled in Settings, clients can connect using username 'anonymous' and any password or no password."
-                        android:textColor="#757575"
+                        android:textColor="@color/textColorSecondary"
                         android:textSize="14sp" />
 
                 </LinearLayout>

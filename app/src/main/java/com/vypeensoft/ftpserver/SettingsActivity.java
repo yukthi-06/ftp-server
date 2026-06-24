@@ -47,6 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+        toolbar.setNavigationIconTint(getResources().getColor(R.color.primaryColor));
 
         // Bind views
         editPort = findViewById(R.id.editPort);

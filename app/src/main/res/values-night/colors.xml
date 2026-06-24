@@ -6,6 +6,8 @@
     <color name="secondaryColor">#64B5F6</color>
     <color name="backgroundCard">#1E1E1E</color>
     <color name="backgroundColor">#121212</color>
+    <color name="textColorPrimary">#E0E0E0</color>
+    <color name="textColorSecondary">#9E9E9E</color>
     <color name="statusRunning">#4CAF50</color>
     <color name="statusStopped">#F44336</color>
 </resources>

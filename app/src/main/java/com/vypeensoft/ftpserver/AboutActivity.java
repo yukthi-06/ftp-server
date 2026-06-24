@@ -35,6 +35,9 @@ public class AboutActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.title_about);
         }
+        if (toolbar.getNavigationIcon() != null) {
+            toolbar.getNavigationIcon().setTint(getResources().getColor(R.color.primaryColor));
+        }
     }
 
     @Override

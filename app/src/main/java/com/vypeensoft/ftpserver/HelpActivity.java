@@ -27,6 +27,9 @@ public class HelpActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Help & Support");
         }
+        if (toolbar.getNavigationIcon() != null) {
+            toolbar.getNavigationIcon().setTint(getResources().getColor(R.color.primaryColor));
+        }
 
         MaterialButton btnEmail = findViewById(R.id.btn_email_support);
         btnEmail.setOnClickListener(v -> {
