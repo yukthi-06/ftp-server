@@ -11,6 +11,11 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
+import android.content.pm.ServiceInfo;
+import android.net.wifi.WifiManager;
+import android.os.PowerManager;
+import android.os.Looper;
+import android.os.Handler;
 
 public class FTPServerService extends Service {
     private static final String TAG = "FTPServerService";
@@ -21,8 +26,11 @@ public class FTPServerService extends Service {
     private static final String CHANNEL_ID = "FTPServerChannel";
     private static final int NOTIFICATION_ID = 1001;
 
-    private boolean mIsRunning = false;
+    private volatile boolean mIsRunning = false;
     private final FTPServerManager mFtpServerManager = FTPServerManager.getInstance();
+
+    private PowerManager.WakeLock mWakeLock = null;
+    private WifiManager.WifiLock mWifiLock = null;
 
     private final FTPServerManager.ClientCountListener mClientListener = new FTPServerManager.ClientCountListener() {
         @Override
@@ -57,44 +65,109 @@ public class FTPServerService extends Service {
         if (mIsRunning) return;
 
         SettingsManager.Settings settings = SettingsManager.loadSettings();
-        try {
-            // Check if port is available
-            if (!NetworkUtils.isPortAvailable(settings.port)) {
-                Log.e(TAG, "Port " + settings.port + " is already in use.");
-                stopSelf();
-                return;
-            }
-
-            mFtpServerManager.startServer(settings);
-            mIsRunning = true;
-
-            // Start foreground
-            Notification notification = buildNotification(settings);
+        
+        // Start foreground immediately on the main thread to satisfy the 5-second OS window
+        Notification notification = buildNotification(settings);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+        } else {
             startForeground(NOTIFICATION_ID, notification);
-
-            // Update setting state to enabled
-            settings.server_enabled = true;
-            SettingsManager.saveSettings(settings);
-
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to start FTP server: " + e.getMessage());
-            stopSelf();
         }
+
+        new Thread(() -> {
+            try {
+                // Check if port is available
+                if (!NetworkUtils.isPortAvailable(settings.port)) {
+                    Log.e(TAG, "Port " + settings.port + " is already in use.");
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        stopForeground(true);
+                        stopSelf();
+                    });
+                    return;
+                }
+
+                // Acquire WakeLock
+                PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                if (powerManager != null) {
+                    mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FTPServer::WakeLock");
+                    mWakeLock.acquire();
+                }
+
+                // Acquire WifiLock
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if (wifiManager != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "FTPServer::WifiLock");
+                    } else {
+                        mWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "FTPServer::WifiLock");
+                    }
+                    mWifiLock.acquire();
+                }
+
+                mFtpServerManager.startServer(settings);
+                mIsRunning = true;
+
+                // Update setting state to enabled
+                settings.server_enabled = true;
+                SettingsManager.saveSettings(settings);
+
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to start FTP server: " + e.getMessage());
+                releaseLocks();
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    stopForeground(true);
+                    stopSelf();
+                });
+            }
+        }).start();
     }
 
     private void stopFtpServer() {
         if (!mIsRunning) return;
 
-        mFtpServerManager.stopServer();
-        mIsRunning = false;
+        new Thread(() -> {
+            try {
+                mFtpServerManager.stopServer();
+            } catch (Exception e) {
+                Log.e(TAG, "Error stopping FTP server: " + e.getMessage());
+            }
+            mIsRunning = false;
 
-        // Update setting state to disabled
-        SettingsManager.Settings settings = SettingsManager.loadSettings();
-        settings.server_enabled = false;
-        SettingsManager.saveSettings(settings);
+            // Release locks
+            releaseLocks();
 
-        stopForeground(true);
-        stopSelf();
+            // Update setting state to disabled
+            SettingsManager.Settings settings = SettingsManager.loadSettings();
+            settings.server_enabled = false;
+            SettingsManager.saveSettings(settings);
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                stopForeground(true);
+                stopSelf();
+            });
+        }).start();
+    }
+
+    private void releaseLocks() {
+        try {
+            if (mWifiLock != null && mWifiLock.isHeld()) {
+                mWifiLock.release();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error releasing WifiLock: " + e.getMessage());
+        } finally {
+            mWifiLock = null;
+        }
+
+        try {
+            if (mWakeLock != null && mWakeLock.isHeld()) {
+                mWakeLock.release();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error releasing WakeLock: " + e.getMessage());
+        } finally {
+            mWakeLock = null;
+        }
     }
 
     private void updateNotification() {
@@ -152,7 +225,14 @@ public class FTPServerService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mFtpServerManager.setClientCountListener(null);
-        mFtpServerManager.stopServer();
+        new Thread(() -> {
+            try {
+                mFtpServerManager.stopServer();
+            } catch (Exception e) {
+                Log.e(TAG, "Error stopping server in onDestroy: " + e.getMessage());
+            }
+            releaseLocks();
+        }).start();
     }
 
     @Override
