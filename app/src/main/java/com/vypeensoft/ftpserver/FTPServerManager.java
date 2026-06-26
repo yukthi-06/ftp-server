@@ -16,6 +16,10 @@ import org.apache.ftpserver.ftplet.User;
 import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.ftplet.Authentication;
 import org.apache.ftpserver.ftplet.AuthenticationFailedException;
+import org.apache.ftpserver.ftplet.FtpFile;
+import org.apache.ftpserver.ftplet.FileSystemView;
+import org.apache.ftpserver.ftplet.FileSystemFactory;
+import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.AnonymousAuthentication;
 import org.apache.ftpserver.usermanager.UsernamePasswordAuthentication;
@@ -96,6 +100,47 @@ public class FTPServerManager {
         // Custom in-memory user manager
         serverFactory.setUserManager(new CustomUserManager(settings));
 
+        // Custom FileSystemFactory to wrap NativeFileSystemFactory and prevent NIO transferTo crashes on Android
+        serverFactory.setFileSystem(new FileSystemFactory() {
+            private final NativeFileSystemFactory delegate = new NativeFileSystemFactory();
+
+            @Override
+            public FileSystemView createFileSystemView(User user) throws FtpException {
+                final FileSystemView view = delegate.createFileSystemView(user);
+                return new FileSystemView() {
+                    @Override
+                    public FtpFile getHomeDirectory() throws FtpException {
+                        return wrapFile(view.getHomeDirectory());
+                    }
+
+                    @Override
+                    public FtpFile getWorkingDirectory() throws FtpException {
+                        return wrapFile(view.getWorkingDirectory());
+                    }
+
+                    @Override
+                    public boolean changeWorkingDirectory(String dir) throws FtpException {
+                        return view.changeWorkingDirectory(dir);
+                    }
+
+                    @Override
+                    public FtpFile getFile(String file) throws FtpException {
+                        return wrapFile(view.getFile(file));
+                    }
+
+                    @Override
+                    public boolean isRandomAccessible() throws FtpException {
+                        return view.isRandomAccessible();
+                    }
+
+                    @Override
+                    public void dispose() {
+                        view.dispose();
+                    }
+                };
+            }
+        });
+
         // Ftplet for tracking connections
         Map<String, org.apache.ftpserver.ftplet.Ftplet> ftplets = new HashMap<>();
         ftplets.put("tracker", new ConnectionTrackerFtplet());
@@ -155,6 +200,16 @@ public class FTPServerManager {
             this.mSettings = settings;
         }
 
+        private String getCanonicalHomeDir() {
+            String rootDir = mSettings.root_directory;
+            try {
+                rootDir = new java.io.File(rootDir).getCanonicalPath();
+            } catch (IOException e) {
+                Log.w(TAG, "Failed to resolve canonical path for root directory: " + e.getMessage());
+            }
+            return rootDir;
+        }
+
         @Override
         public User getUserByName(String username) throws FtpException {
             if (mSettings.anonymous_login && "anonymous".equalsIgnoreCase(username)) {
@@ -169,7 +224,7 @@ public class FTPServerManager {
         private User createAnonymousUser() {
             BaseUser user = new BaseUser();
             user.setName("anonymous");
-            user.setHomeDirectory(mSettings.root_directory);
+            user.setHomeDirectory(getCanonicalHomeDir());
             List<Authority> authorities = new ArrayList<>();
             authorities.add(new org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission(mSettings.max_connections, mSettings.max_connections));
             if (!mSettings.read_only) {
@@ -183,7 +238,7 @@ public class FTPServerManager {
             BaseUser user = new BaseUser();
             user.setName(mSettings.username);
             user.setPassword(mSettings.password);
-            user.setHomeDirectory(mSettings.root_directory);
+            user.setHomeDirectory(getCanonicalHomeDir());
             List<Authority> authorities = new ArrayList<>();
             authorities.add(new org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission(mSettings.max_connections, mSettings.max_connections));
             if (!mSettings.read_only) {
@@ -242,6 +297,149 @@ public class FTPServerManager {
         @Override
         public boolean isAdmin(String username) {
             return mSettings.username.equals(username);
+        }
+    }
+
+    private static FtpFile wrapFile(FtpFile file) {
+        if (file == null) return null;
+        if (file instanceof WrappedFtpFile) {
+            return file;
+        }
+        return new WrappedFtpFile(file);
+    }
+
+    private static class WrappedFtpFile implements FtpFile {
+        private final FtpFile file;
+
+        public WrappedFtpFile(FtpFile file) {
+            this.file = file;
+        }
+
+        public FtpFile getDelegate() {
+            return file;
+        }
+
+        @Override
+        public String getAbsolutePath() {
+            return file.getAbsolutePath();
+        }
+
+        @Override
+        public String getName() {
+            return file.getName();
+        }
+
+        @Override
+        public boolean isHidden() {
+            return file.isHidden();
+        }
+
+        @Override
+        public boolean isDirectory() {
+            return file.isDirectory();
+        }
+
+        @Override
+        public boolean isFile() {
+            return file.isFile();
+        }
+
+        @Override
+        public boolean doesExist() {
+            return file.doesExist();
+        }
+
+        @Override
+        public boolean isReadable() {
+            return file.isReadable();
+        }
+
+        @Override
+        public boolean isWritable() {
+            return file.isWritable();
+        }
+
+        @Override
+        public boolean isRemovable() {
+            return file.isRemovable();
+        }
+
+        @Override
+        public String getOwnerName() {
+            return file.getOwnerName();
+        }
+
+        @Override
+        public String getGroupName() {
+            return file.getGroupName();
+        }
+
+        @Override
+        public int getLinkCount() {
+            return file.getLinkCount();
+        }
+
+        @Override
+        public long getLastModified() {
+            return file.getLastModified();
+        }
+
+        @Override
+        public boolean setLastModified(long time) {
+            return file.setLastModified(time);
+        }
+
+        @Override
+        public long getSize() {
+            return file.getSize();
+        }
+
+        @Override
+        public Object getPhysicalFile() {
+            return file.getPhysicalFile();
+        }
+
+        @Override
+        public boolean mkdir() {
+            return file.mkdir();
+        }
+
+        @Override
+        public boolean delete() {
+            return file.delete();
+        }
+
+        @Override
+        public boolean move(FtpFile dest) {
+            FtpFile rawDest = dest instanceof WrappedFtpFile ? ((WrappedFtpFile) dest).getDelegate() : dest;
+            return file.move(rawDest);
+        }
+
+        @Override
+        public List<FtpFile> listFiles() {
+            List<? extends FtpFile> files = file.listFiles();
+            if (files == null) return null;
+            List<FtpFile> wrapped = new ArrayList<>();
+            for (FtpFile f : files) {
+                wrapped.add(wrapFile(f));
+            }
+            return wrapped;
+        }
+
+        @Override
+        public java.io.InputStream createInputStream(long offset) throws IOException {
+            java.io.InputStream is = file.createInputStream(offset);
+            if (is == null) return null;
+            // Wrap in BufferedInputStream to prevent native transferTo crashes on Android
+            return new java.io.BufferedInputStream(is);
+        }
+
+        @Override
+        public java.io.OutputStream createOutputStream(long offset) throws IOException {
+            java.io.OutputStream os = file.createOutputStream(offset);
+            if (os == null) return null;
+            // Wrap in BufferedOutputStream to prevent native transferFrom crashes on Android
+            return new java.io.BufferedOutputStream(os);
         }
     }
 }
